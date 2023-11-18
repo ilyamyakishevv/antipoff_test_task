@@ -20,12 +20,15 @@ class Request(Base):
     create_date = Column(DateTime)
 
 
-async def create_tables():
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+# async def create_tables():
+#     async with engine.begin() as conn:
+#         await conn.run_sync(Base.metadata.create_all)
 
 async def create_database():
-    await create_tables()
+    async with engine.begin() as conn:
+        if not await conn.run_sync(engine.dialect.has_table, conn, "requests"):
+            await conn.run_sync(Base.metadata.create_all)
+
 
 
 async def main():

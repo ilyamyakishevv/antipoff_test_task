@@ -1,5 +1,5 @@
 import asyncio
-from db import  Request, SessionLocal
+from db import Request, SessionLocal, create_database
 import datetime
 from fastapi import FastAPI
 from pydantic_models import QueryRequest, ResultResponse
@@ -7,6 +7,15 @@ from sqlalchemy.sql import select
 from random import choice
 
 app = FastAPI()
+
+
+async def startup():
+    await create_database()
+
+
+@app.on_event("startup")
+async def startup_event():
+    await startup()
 
 db = SessionLocal()
 
@@ -35,7 +44,6 @@ async def check_server_state():
 async def post_result(response: ResultResponse):
     req = await db.execute(select(Request).filter(Request.id == response.id))
     rows = req.scalars().all()
-    print(rows)
     if rows:
         found_request = rows[0]
         found_request.response = response.result
