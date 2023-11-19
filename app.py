@@ -16,7 +16,7 @@ async def startup():
 
 @app.on_event("startup")
 async def startup_event():
-    await startup()
+    await create_database()
 
 db = SessionLocal()
 
