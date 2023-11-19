@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from pydantic_models import QueryRequest, ResultResponse
 from sqlalchemy.sql import select
 from random import choice
+import uvicorn
 
 app = FastAPI()
 
@@ -65,3 +66,7 @@ async def get_history(cadastre_number: str):
     querys = await db.execute(select(Request).filter(Request.cadastre_number == cadastre_number))
     return {f"history for query by cadastre number {cadastre_number}": querys.scalars().all()}
 
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
