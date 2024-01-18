@@ -12,14 +12,11 @@ from sqladmin import Admin, ModelView
 
 app = FastAPI()
 
-
 async def startup():
     await create_database()
 
 
-@app.on_event("startup")
-async def startup_event():
-    await create_database()
+app.add_event_handler("startup", startup)
 
 db = SessionLocal()
 
