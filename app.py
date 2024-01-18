@@ -1,11 +1,14 @@
 import asyncio
-from db import Request, SessionLocal, create_database
+from db import Request, SessionLocal, create_database, engine
 import datetime
 from fastapi import FastAPI
 from pydantic_models import QueryRequest, ResultResponse
 from sqlalchemy.sql import select
 from random import choice
 import uvicorn
+from sqladmin import Admin, ModelView
+
+
 
 app = FastAPI()
 
@@ -19,6 +22,15 @@ async def startup_event():
     await create_database()
 
 db = SessionLocal()
+
+admin = Admin(app, engine)
+
+
+class UserAdmin(ModelView, model=Request):
+    column_list = '__all__'
+
+
+admin.add_view(UserAdmin)
 
 @app.post("/query")
 async def get_query(request: QueryRequest):
